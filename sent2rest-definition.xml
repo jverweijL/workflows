@@ -2,36 +2,115 @@
 <workflow-definition
 	xmlns="urn:liferay.com:liferay-workflow_7.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:liferay.com:liferay-workflow_7.0.0 http://www.liferay.com/dtd/liferay-workflow-definition_7_0_0.xsd">
-	<name>Sent To Rest</name>
+	<name>sent2rest</name>
 	<description></description>
 	<version>1</version>
 	<state>
-		<name>StartNode</name>
+		<name>Start</name>
 		<metadata>
-			<![CDATA[{"xy":[96,36]}]]>
+			<![CDATA[{"xy":[100,40]}]]>
 		</metadata>
 		<actions>
 			<action>
-				<name>Logger</name>
+				<name>Log</name>
 				<description></description>
 				<script>
-					<![CDATA[System.out.println("here we go with the workflow YOYO");]]>
+					<![CDATA[import com.liferay.portal.kernel.util.GetterUtil;
+						import com.liferay.portal.kernel.workflow.WorkflowConstants;
+						import com.liferay.portal.kernel.service.ServiceContext;
+						//import com.liferay.portlet.dynamicdatamapping.storage.Field;
+						import com.liferay.dynamic.data.lists.model.DDLRecord;
+						import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
+						import com.liferay.dynamic.data.lists.service.DDLRecordVersionLocalServiceUtil
+						import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
+						import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+						import java.net.HttpURLConnection;
+						import java.net.URL;
+						import java.net.URLEncoder;
+						import java.io.DataOutputStream;
+						import java.util.List;
+						import java.util.Locale;
+
+						long companyId = GetterUtil.getLong((String) workflowContext.get(WorkflowConstants.CONTEXT_COMPANY_ID));
+						System.out.println("companyID: " + companyId);
+
+						ServiceContext serviceContext = (ServiceContext) workflowContext.get(WorkflowConstants.CONTEXT_SERVICE_CONTEXT);
+
+        				long classPK = GetterUtil.getLong((String)workflowContext.get(WorkflowConstants.CONTEXT_ENTRY_CLASS_PK));
+						System.out.println("original classPK: " + classPK);
+
+						DDLRecordVersion ddlRecordVersion = DDLRecordVersionLocalServiceUtil.getRecordVersion(classPK);
+        				DDLRecord ddlRecord = DDLRecordLocalServiceUtil.getRecord(ddlRecordVersion.getRecordId());
+
+						Locale locale = new Locale("en", "US");
+
+						List<DDMFormFieldValue> values;
+						values = ddlRecord.getDDMFormFieldValues("Subject");
+						String subject = "";
+        				for(DDMFormFieldValue value : values){
+							subject = value.getValue().getString(locale);
+							System.out.println("subject: " + subject);
+						}
+
+						values = ddlRecord.getDDMFormFieldValues("Description");
+						String description = "";
+        				for(DDMFormFieldValue value : values){
+							description = value.getValue().getString(locale);
+							System.out.println("description: " + description);
+						}
+
+						// checkout http://mockbin.org/bin/14f67c2e-66d3-47dd-b715-083d7b7d6d57/log for actual request
+						URL obj = new URL("http://mockbin.org/bin/14f67c2e-66d3-47dd-b715-083d7b7d6d57");
+						HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+						
+						//add request header
+						con.setRequestMethod("POST");
+						con.setRequestProperty("User-Agent", "LiferayDXP");
+						con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+						
+						String urlParameters = "";
+						urlParameters += "subject=" + URLEncoder.encode(subject,"utf-8");
+						urlParameters += "&description=" + URLEncoder.encode(description,"utf-8");
+						
+						// Send post request
+						con.setDoOutput(true);
+						DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+						wr.writeBytes(urlParameters);
+						wr.flush();
+						wr.close();
+
+						int responseCode = con.getResponseCode();
+
+						System.out.println("Responsecode: " + responseCode);]]>
 				</script>
 				<script-language>groovy</script-language>
 				<execution-type>onEntry</execution-type>
 			</action>
+			<notification>
+				<name>Notifier</name>
+				<description></description>
+				<template>
+					<![CDATA[Hi, you just received a message from the workflow]]>
+				</template>
+				<template-language>text</template-language>
+				<notification-type>user-notification</notification-type>
+				<recipients>
+					<user/>
+				</recipients>
+				<execution-type>onEntry</execution-type>
+			</notification>
 		</actions>
 		<initial>true</initial>
 		<transitions>
 			<transition>
-				<name>connector48899</name>
-				<target>task48722</target>
+				<name>connector135430</name>
+				<target>End</target>
 				<default>true</default>
 			</transition>
 		</transitions>
 	</state>
 	<state>
-		<name>EndNode</name>
+		<name>End</name>
 		<metadata>
 			<![CDATA[{"terminal":true,"xy":[100,500]}]]>
 		</metadata>
@@ -47,31 +126,4 @@
 			</action>
 		</actions>
 	</state>
-	<task>
-		<name>task48722</name>
-		<metadata>
-			<![CDATA[{"xy":[322,206]}]]>
-		</metadata>
-		<actions>
-			<action>
-				<name>RestCall</name>
-				<description></description>
-				<script>
-					<![CDATA[System.out.println("User Name: " + user.getFullName());]]>
-				</script>
-				<script-language>groovy</script-language>
-				<execution-type>onAssignment</execution-type>
-			</action>
-		</actions>
-		<assignments>
-			<user/>
-		</assignments>
-		<transitions>
-			<transition>
-				<name>connector52749</name>
-				<target>EndNode</target>
-				<default>true</default>
-			</transition>
-		</transitions>
-	</task>
 </workflow-definition>
