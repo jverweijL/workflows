@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow-definition xmlns="urn:liferay.com:liferay-workflow_7.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:liferay.com:liferay-workflow_7.0.0 http://www.liferay.com/dtd/liferay-workflow-definition_7_0_0.xsd">
+    <name>Registration</name>
+    <version>1</version>
+    <state>
+        <name>Start</name>
+        <metadata><![CDATA[{"xy":[100,50],"transitions":{"End":{"bendpoints":[]},"SentMail":{"bendpoints":[]}}}]]></metadata>
+        <actions>
+            <action>
+                <name>startAction</name>
+                <script><![CDATA[/* specify action script */
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.dynamic.data.lists.model.DDLRecord;
+import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
+import com.liferay.dynamic.data.lists.service.DDLRecordVersionLocalServiceUtil
+import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import java.util.List;
+import java.util.Locale;
+                
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.mail.kernel.model.MailMessage;
+import com.liferay.mail.kernel.service.MailServiceUtil;
+import com.liferay.portal.kernel.exception.ModelListenerException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.BaseModelListener;
+import com.liferay.portal.kernel.model.ModelListener;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.template.ClassLoaderTemplateResource;
+import com.liferay.portal.kernel.template.StringTemplateResource;
+import com.liferay.portal.kernel.template.Template;
+import com.liferay.portal.kernel.template.TemplateConstants;
+import com.liferay.portal.kernel.template.TemplateException;
+import com.liferay.portal.kernel.template.TemplateManagerUtil;
+import com.liferay.portal.kernel.template.TemplateResource;
+import com.liferay.portal.kernel.template.URLTemplateResource;
+import com.liferay.portal.kernel.util.PropsUtil;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Properties;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
+System.out.println("starting registration process v3");
+
+String body = "my body";		
+
+System.out.println(body);
+
+
+long classPK = GetterUtil.getLong((String)workflowContext.get(WorkflowConstants.CONTEXT_ENTRY_CLASS_PK));
+
+System.out.println("original classPK: " + classPK);
+DDLRecordVersion ddlRecordVersion = DDLRecordVersionLocalServiceUtil.getRecordVersion(classPK);
+DDLRecord ddlRecord = DDLRecordLocalServiceUtil.getRecord(ddlRecordVersion.getRecordId());
+Locale locale = new Locale("en", "US");
+List<DDMFormFieldValue> values;
+
+values = ddlRecord.getDDMFormFieldValues("UwEmailadres"); //fieldname in your form where to find the emailaddress
+String email = "";
+for(DDMFormFieldValue value : values){
+	email = value.getValue().getString(locale);
+	System.out.println("email: " + email);
+	try {			
+	System.out.println("starting mailing process v2");
+	MailMessage mailMessage = new MailMessage();
+	mailMessage.setTo(new InternetAddress(email));
+	mailMessage.setFrom(new InternetAddress("recyclebin@liferay.com"));
+	mailMessage.setSubject("your subject");
+	mailMessage.setBody(body);
+	mailMessage.setHTMLFormat(true);
+	
+	MailServiceUtil.sendEmail(mailMessage);
+	System.out.println("Send mail");
+} catch (AddressException e) {
+    	e.printStackTrace();
+}
+}
+
+
+
+]]></script>
+                <script-language>groovy</script-language>
+                <execution-type>onEntry</execution-type>
+            </action>
+        </actions>
+        <initial>true</initial>
+        <transitions>
+            <transition>
+                <name>End</name>
+                <target>End</target>
+            </transition>
+        </transitions>
+    </state>
+    <state>
+        <name>End</name>
+        <metadata><![CDATA[{"xy":[520,50],"terminal":true}]]></metadata>
+        <actions>
+            <action>
+                <name>approve</name>
+                <script><![CDATA[Packages.com.liferay.portal.kernel.workflow.WorkflowStatusManagerUtil.updateStatus(Packages.com.liferay.portal.kernel.workflow.WorkflowConstants.toStatus("approved"), workflowContext);]]></script>
+                <script-language>javascript</script-language>
+                <execution-type>onEntry</execution-type>
+            </action>
+        </actions>
+    </state>
+</workflow-definition>
