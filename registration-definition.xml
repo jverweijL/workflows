@@ -4,10 +4,35 @@
     <version>1</version>
     <state>
         <name>Start</name>
-        <metadata><![CDATA[{"xy":[100,50],"transitions":{"End":{"bendpoints":[]},"SentMail":{"bendpoints":[]}}}]]></metadata>
+        <metadata><![CDATA[{"xy":[100,50],"transitions":{"Start":{"bendpoints":[]},"Starting":{"bendpoints":[]},"End":{"bendpoints":[]},"SentMail":{"bendpoints":[]}}}]]></metadata>
+        
+        <initial>true</initial>
+        <transitions>
+            <transition>
+                <name>Start</name>
+                <target>New Task</target>
+            </transition>
+            <transition>
+                <name>End</name>
+                <target>End</target>
+            </transition>
+        </transitions>
+    </state>
+    <state>
+        <name>End</name>
+        <metadata><![CDATA[{"xy":[520,50],"terminal":true}]]></metadata>
         <actions>
             <action>
-                <name>startAction</name>
+				<name>Approve</name>
+				<description>Approve</description>
+				<script>
+					<![CDATA[com.liferay.portal.kernel.workflow.WorkflowStatusManagerUtil.updateStatus(com.liferay.portal.kernel.workflow.WorkflowConstants.getLabelStatus("approved"), workflowContext);]]>
+				</script>
+				<script-language>groovy</script-language>
+				<execution-type>onEntry</execution-type>
+			</action>
+            <action>
+                <name>SentEmail</name>
                 <script><![CDATA[/* specify action script */
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -88,25 +113,6 @@ import javax.mail.internet.InternetAddress;
 
 ]]></script>
                 <script-language>groovy</script-language>
-                <execution-type>onEntry</execution-type>
-            </action>
-        </actions>
-        <initial>true</initial>
-        <transitions>
-            <transition>
-                <name>End</name>
-                <target>End</target>
-            </transition>
-        </transitions>
-    </state>
-    <state>
-        <name>End</name>
-        <metadata><![CDATA[{"xy":[520,50],"terminal":true}]]></metadata>
-        <actions>
-            <action>
-                <name>approve</name>
-                <script><![CDATA[Packages.com.liferay.portal.kernel.workflow.WorkflowStatusManagerUtil.updateStatus(Packages.com.liferay.portal.kernel.workflow.WorkflowConstants.toStatus("approved"), workflowContext);]]></script>
-                <script-language>javascript</script-language>
                 <execution-type>onEntry</execution-type>
             </action>
         </actions>
