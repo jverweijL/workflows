@@ -63,22 +63,6 @@ import javax.mail.internet.InternetAddress;
 
 		System.out.println("starting registration process v5");
 		
-		String body = "failed";
-		URL url = new URL("https://liferay.bluemonkey.io/documents/312706/0/registration.ftl/a3f24f65-e886-f789-5838-1848e9d576ea?download=true");
-		TemplateResource templateResource = new URLTemplateResource("0",url);
-		Template template = TemplateManagerUtil.getTemplate(TemplateConstants.LANG_TYPE_FTL, templateResource, false);
-		
-		// Add the data-models
-        //template.put("user", user);
-		//template.put("entry", entry);				
-        
-        StringWriter out = new StringWriter();
-        
-        template.processTemplate(out);
-        body = out.toString();	
-	
-		System.out.println(body);
-	
 	
 		long classPK = GetterUtil.getLong((String)workflowContext.get(WorkflowConstants.CONTEXT_ENTRY_CLASS_PK));
 	
@@ -87,6 +71,22 @@ import javax.mail.internet.InternetAddress;
 		DDLRecord ddlRecord = DDLRecordLocalServiceUtil.getRecord(ddlRecordVersion.getRecordId());
 		Locale locale = new Locale("en", "US");
 		List<DDMFormFieldValue> values;
+		
+		String body = "failed";
+		URL url = new URL("https://liferay.bluemonkey.io/documents/312706/0/registration.ftl/a3f24f65-e886-f789-5838-1848e9d576ea?download=true");
+		TemplateResource templateResource = new URLTemplateResource("0",url);
+		Template template = TemplateManagerUtil.getTemplate(TemplateConstants.LANG_TYPE_FTL, templateResource, false);
+		
+		// Add the data-models
+        template.put("voornaam", ddlRecord.getDDMFormFieldValues("Voornaam").get(0).getValue().getString(locale));
+		//template.put("entry", entry);				
+        
+        StringWriter out = new StringWriter();
+        
+        template.processTemplate(out);
+        body = out.toString();	
+	
+		System.out.println(body);
 	
 		values = ddlRecord.getDDMFormFieldValues("UwEmailadres"); //fieldname in your form where to find the emailaddress
 		String email = "";
