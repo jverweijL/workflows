@@ -252,7 +252,7 @@ a[x-apple-data-detectors=true] {
                     <div class="">
 	<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 30px; padding-left: 30px; padding-top: 30px; padding-bottom: 15px;"><![endif]-->
 	<div style="line-height:120%;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;color:#555555; padding-right: 30px; padding-left: 30px; padding-top: 30px; padding-bottom: 15px;">	
-		<div style="font-family:Montserrat, 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;line-height:14px;font-size:12px;color:#555555;text-align:left;"><p style="margin: 0;line-height: 14px;text-align: center;font-size: 12px"><span style="font-size: 18px; line-height: 21px;"><b>Ben jij klaar voor de uitdaging?</b></span></p></div>	
+		<div style="font-family:Montserrat, 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;line-height:14px;font-size:12px;color:#555555;text-align:left;"><p style="margin: 0;line-height: 14px;text-align: center;font-size: 12px"><span style="font-size: 18px; line-height: 21px;"><b><span style="text-transform: capitalize;">${voornaam}</span>, Ben jij klaar voor de uitdaging?</b></span></p></div>	
 	</div>
 	<!--[if mso]></td></tr></table><![endif]-->
 </div>
@@ -270,7 +270,10 @@ a[x-apple-data-detectors=true] {
                     <div class="">
 	<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 30px;"><![endif]-->
 	<div style="line-height:120%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;color:#989898; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 30px;">	
-		<div style="font-size:12px;line-height:14px;color:#989898;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu ullamcorper tellus. Nulla eu lacinia metus. Duis tempor dictum tortor a ultricies. Donec interdum neque quis lacus porta, a varius dui iaculis.</p></div>	
+		<div style="font-size:12px;line-height:14px;color:#989898;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center">
+        <br/>
+        <br/>
+        LoremLorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu ullamcorper tellus. Nulla eu lacinia metus. Duis tempor dictum tortor a ultricies. Donec interdum neque quis lacus porta, a varius dui iaculis.</p></div>	
 	</div>
 	<!--[if mso]></td></tr></table><![endif]-->
 </div>
